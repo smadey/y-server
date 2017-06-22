@@ -16,8 +16,9 @@ const express = require('express');
  * @param {Object} options.requestOptions 请求配置
  *
  * @param {Boolean} options.mockEnable 数据模拟开关
- * @param {String} options.mockJsonDir 模拟数据目录
+ * @param {String} options.mockDir 模拟数据目录
  * @param {String|Function} options.mockResultResolver 模拟数据处理器
+ * @param {Boolean} options.throwMockError 抛出Api模拟数据错误开关
  * @return {Function} 中间件方法
  */
 module.exports = (options) => {

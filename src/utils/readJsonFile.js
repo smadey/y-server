@@ -3,7 +3,7 @@
 const fs = require('fs');
 
 const chalk = require('chalk');
-const stripJsonComments = require('strip-json-comments');
+// const stripJsonComments = require('strip-json-comments');
 
 /**
  * 读取JSON文件
@@ -22,10 +22,11 @@ module.exports = (filePath) => {
       fs.readFile(filePath, 'utf-8', (err, result) => { // 这里不直接用 require 是为了避免缓存
         if (err) {
           console.log(chalk.red('[读取JSON文件]'), `读取文件"${filePath}"失败`);
-          return reject(`读取"${filePath}"文件失败:\n${err.stack}`);
+          return reject(`读取文件"${filePath}"失败:\n${err.stack}`);
         }
         try {
-          result = JSON.parse(stripJsonComments(result));
+          // result = JSON.parse(stripJsonComments(result));
+          result = JSON.parse(result);
         } catch (ex) {
           console.log(chalk.red('[读取JSON文件]'), `文件"${filePath}"非JSON格式`);
           return reject(`文件"${filePath}"非JSON格式, 内容:\n${result}`);

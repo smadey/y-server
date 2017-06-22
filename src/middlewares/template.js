@@ -9,8 +9,8 @@ const express = require('express');
 const request = require('request');
 const _ = require('lodash');
 
+const getMockData = require('../utils/getMockData.js');
 const getResolver = require('../utils/getResolver.js');
-const readJsonFile = require('../utils/readJsonFile.js');
 const requestRemote = require('../utils/requestRemote.js');
 
 /**
@@ -62,8 +62,9 @@ function transformRoutes(routes, masterHost) {
  * @param {Object} options.apiOptions 模板请求配置
  *
  * @param {Boolean} options.mockEnable 模板数据模拟开关
- * @param {String} options.mockJsonDir 模板模拟数据目录
+ * @param {String} options.mockDir 模板模拟数据目录
  * @param {String|Function} options.mockResultResolver 模板模拟数据处理器
+ * @param {Boolean} options.throwMockError 抛出Api模拟数据错误开关
  * @return {Function} 中间件方法
  */
 module.exports = (options) => {
@@ -90,7 +91,8 @@ module.exports = (options) => {
   const defaultReqOptions = _.omit(apiOptions, 'query');
   const defaultReqQuery = apiOptions.query;
   const apiRouterHandle = function (routeConfig, req, res, next) {
-    const urlObj = url.parse(`${apiServer}${routeConfig.cgi}`);
+    const urlObj = url.parse(`${apiServer}${routeConfig.cgi}`, true, true);
+    urlObj.search = null; // 有 search 时 query 不生效
     urlObj.query = Object.assign({}, defaultReqQuery, req.query, urlObj.query, req.params);
 
     const reqOptions = Object.assign({
@@ -103,14 +105,18 @@ module.exports = (options) => {
   };
 
   const mockEnable = options.mockEnable;
-  const mockJsonDir = options.mockJsonDir;
+  const mockDir = options.mockDir;
   const mockResultResolver = getResolver(options.mockResultResolver);
-  const mockRouteHandle = function (routeConfig, req, res) {
-    readJsonFile(path.join(mockJsonDir, `${routeConfig.cgi}.json`)).then((result) => {
-      mockResultResolver(result, req, res).then((data) => {
+  const throwMockError = options.throwMockError;
+  const mockRouteHandle = function (routeConfig, req, res, next) {
+    getMockData(path.join(mockDir, routeConfig.cgi), req, res).then((result) => {
+      return mockResultResolver(result, req, res).then((data) => {
         render(routeConfig, data, req, res);
       });
-    }, () => {
+    }).catch((err) => {
+      if (throwMockError) {
+        return next(err);
+      }
       apiRouterHandle.apply(this, arguments); // 注意这里的 this 和 arguments
     });
   };

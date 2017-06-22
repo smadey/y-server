@@ -1,3 +1,5 @@
+'use strict';
+
 /**
  * 404中间件
  * @param {Object} options 配置

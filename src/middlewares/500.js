@@ -1,3 +1,5 @@
+'use strict';
+
 /**
  * 错误页中间件
  * @param {Object} options 配置
@@ -9,7 +11,7 @@ module.exports = (options) => {
     options = {};
   }
 
-  return (req, res, next) => {
+  return (err, req, res, next) => {
     if (options.view) {
       res.status(500).render(options.view, { msg: err });
     } else {

@@ -1,3 +1,5 @@
+'use strict';
+
 const urlParse = require('url').parse;
 
 const chalk = require('chalk');
