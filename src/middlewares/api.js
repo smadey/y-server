@@ -8,8 +8,8 @@ const chalk = require('chalk');
 const express = require('express');
 const proxy = require('express-request-proxy');
 
-const getMockData = require('../utils/getMockData.js');
-const getResolver = require('../utils/getResolver.js');
+const getMockData = require('./utils/getMockData.js');
+const getResolver = require('./utils/getResolver.js');
 
 /**
  * Api请求中间件

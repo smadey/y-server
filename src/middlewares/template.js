@@ -8,9 +8,9 @@ const _ = require('lodash');
 const chalk = require('chalk');
 const express = require('express');
 
-const getMockData = require('../utils/getMockData.js');
-const getResolver = require('../utils/getResolver.js');
-const requestRemote = require('../utils/requestRemote.js');
+const getMockData = require('./utils/getMockData.js');
+const getResolver = require('./utils/getResolver.js');
+const requestRemote = require('./utils/requestRemote.js');
 
 /**
  * 转换路由

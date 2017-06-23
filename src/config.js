@@ -34,7 +34,7 @@ if (fs.existsSync(configFileName)) {
         options: {
           apiPaths: ['/api/*'],
 
-          viewDir: resolve('../views'),
+          viewDir: resolve('./views'),
           routes: {
             '/': { view: 'index.html', cgi: '/page/index' },
           },
