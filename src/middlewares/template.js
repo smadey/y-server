@@ -4,10 +4,9 @@ const fs = require('fs');
 const path = require('path');
 const url = require('url');
 
+const _ = require('lodash');
 const chalk = require('chalk');
 const express = require('express');
-const request = require('request');
-const _ = require('lodash');
 
 const getMockData = require('../utils/getMockData.js');
 const getResolver = require('../utils/getResolver.js');

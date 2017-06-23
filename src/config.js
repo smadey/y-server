@@ -15,7 +15,7 @@ if (fs.existsSync(configFileName)) {
   config = Object.assign({}, config, { __filename__: configFileName });
 } else {
   config = {
-    __filename: __filename,
+    __filename__: __filename,
 
     port: process.env.PORT || 8888,
 

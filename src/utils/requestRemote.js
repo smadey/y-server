@@ -1,7 +1,6 @@
 'use strict';
 
-const fs = require('fs');
-const url = require('url');
+const urlFormat = require('url').format;
 
 const chalk = require('chalk');
 const request = require('request');
@@ -16,7 +15,7 @@ module.exports = (requestOptions) => {
     let uri = requestOptions.uri;
 
     if (!uri) {
-        uri = requestOptions.uri = url.format(requestOptions.url);
+        uri = requestOptions.uri = urlFormat(requestOptions.url);
     }
 
     console.log(chalk.blue('[数据请求]'), `请求"${uri}"开始`);

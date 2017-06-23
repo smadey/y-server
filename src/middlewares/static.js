@@ -2,9 +2,9 @@
 
 const urlParse = require('url').parse;
 
+const _ = require('lodash');
 const chalk = require('chalk');
 const express = require('express');
-const _ = require('lodash');
 
 /**
  * 静态资源中间件
