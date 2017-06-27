@@ -12,10 +12,10 @@ let config;
 
 if (fs.existsSync(configFileName)) {
   config = require(configFileName);
-  config = Object.assign({}, config, { __filename__: configFileName });
+  config = Object.assign({}, config, { __filename: configFileName });
 } else {
   config = {
-    __filename__: __filename,
+    __filename: __filename,
 
     port: process.env.PORT || 8888,
 

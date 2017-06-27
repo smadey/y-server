@@ -8,7 +8,7 @@ const argv = require('./process.argv.js');
 const config = require('./config.js');
 const middlewares = config.middlewares;
 
-const watchFiles = [config.__filename__];
+const watchFiles = [config.__filename];
 
 if (Array.isArray(middlewares)) {
   middlewares.forEach((middleware) => {
@@ -28,7 +28,7 @@ const server = nodemon({
   watch: watchFiles,
   ext: 'js json html',
   env: {
-    argv: argv.__string__,
+    argv: argv.__string,
   },
 });
 
