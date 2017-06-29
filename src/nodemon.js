@@ -8,7 +8,7 @@ const argv = require('./process.argv.js');
 const config = require('./config.js');
 const middlewares = config.middlewares;
 
-const watchFiles = [config.__filename];
+const watchFiles = [resolve(''), config.__filename];
 
 if (Array.isArray(middlewares)) {
   middlewares.forEach((middleware) => {

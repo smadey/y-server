@@ -28,7 +28,7 @@ module.exports = (options) => {
     return (req, res, next) => next();
   }
 
-  const proxy = require('express-http-proxy');
+  const proxy = require('http-proxy-middleware');
 
   const router = express.Router();
 
@@ -36,14 +36,16 @@ module.exports = (options) => {
 
   _.each(staticPaths, (staticPath, routePath) => {
     if (REG_HTTP.test(staticPath)) {
-      const remoteUrl = staticPath;
-      const remotePath = urlParse(remoteUrl).path;
-
-      console.log(chalk.blue('[静态资源映射]'), `"${routePath}"`, '->', `"${remoteUrl}"`);
-
       // 以 http/https 开头的路径, 使用 express-http-proxy 进行代理
-      router.use(routePath, proxy(remoteUrl, {
-        proxyReqPathResolver: req => (remotePath + req.url),
+      console.log(chalk.blue('[静态资源映射]'), `"${routePath}"`, '->', `"${staticPath}"`);
+
+      router.use(routePath, proxy({
+        target: staticPath,
+        pathRewrite: {
+          [`^${routePath}`]: '',
+        },
+        changeOrigin: true,
+        logLevel: 'warn',
       }));
     } else {
       router.use(routePath, express.static(staticPath));
