@@ -1,6 +1,6 @@
 'use strict';
 
-const urlParse = require('url').parse;
+const url = require('url');
 
 const _ = require('lodash');
 const chalk = require('chalk');
@@ -39,13 +39,26 @@ module.exports = (options) => {
       // 以 http/https 开头的路径, 使用 express-http-proxy 进行代理
       console.log(chalk.blue('[静态资源映射]'), `"${routePath}"`, '->', `"${staticPath}"`);
 
+      const staticUrlObj = url.parse(staticPath);
+
+      const pathRewriteFrom = new RegExp(`^${routePath}`);
+      const pathRewriteTo = staticUrlObj.pathname;
+
+      staticUrlObj.pathname = null; // 当 routePath 与 staticUrlObj.pathname 不一致时不移除 pathname 会有问题
+
       router.use(routePath, proxy({
-        target: staticPath,
-        pathRewrite: {
-          [`^${routePath}`]: '',
-        },
+        target: url.format(staticUrlObj),
         changeOrigin: true,
         logLevel: 'warn',
+        // 不用以下方法的原因是 SwitchyOmega 将 localsite.com 指向到 locahost:8080 时得到的 url 包含 host
+        // pathRewrite: {
+        //   [pathRewriteFrom]: pathRewriteTo,
+        // },
+        pathRewrite: (reqUrl) => {
+          const reqUrlObj = url.parse(reqUrl);
+          reqUrlObj.pathname = reqUrlObj.pathname.replace(pathRewriteFrom, pathRewriteTo);
+          return url.format(reqUrlObj);
+        },
       }));
     } else {
       router.use(routePath, express.static(staticPath));
