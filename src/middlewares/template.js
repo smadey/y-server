@@ -53,7 +53,7 @@ function transformRoutes(routes, masterHost) {
  * Api请求中间件
  * @param {Object} options 配置
  * @param {String} options.viewDir 模板目录
- * @param {Object} options.masterHost 主域名, 在 路径没有配置host(以非"/"开头) 或 没有匹配到域名 是用此域名
+ * @param {Object} options.masterHost 主域名, 在 路径没有配置host(以非"/"开头) 或 没有匹配到域名 时用此域名
  * @param {Object} options.routes 页面路由
  * @param {String|Function} options.renderResultResolver 模板数据处理器
  *
@@ -75,8 +75,6 @@ module.exports = (options) => {
   const router = express.Router();
 
   const getView = view => path.join(options.viewDir, view);
-  const masterHost = options.masterHost || 'default';
-  const routes = options.routes;
   const renderResultResolver = getResolver(options.renderResultResolver);
   const render = (routeConfig, result, req, res) => {
     renderResultResolver(result, req, res).then((data) => {
@@ -120,6 +118,9 @@ module.exports = (options) => {
     });
   };
 
+  const masterHost = options.masterHost || 'default';
+  const routes = options.routes;
+  const routeHandle = mockEnable ? mockRouteHandle : apiRouterHandle;
   // 先进行路由转换
   _.each(transformRoutes(routes, masterHost), (routeDomainsConfig, routePath) => {
     router.get(routePath, (req, res, next) => {
@@ -133,11 +134,7 @@ module.exports = (options) => {
         return render(routeConfig, {}, req, res);
       }
 
-      if (mockEnable) {
-        mockRouteHandle(routeConfig, req, res, next);
-      } else {
-        apiRouterHandle(routeConfig, req, res, next);
-      }
+      routeHandle(routeConfig, req, res, next);
     });
   });
 
