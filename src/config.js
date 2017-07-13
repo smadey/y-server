@@ -3,10 +3,10 @@
 const fs = require('fs');
 const path = require('path');
 
-const argv = require('./process.argv.js');
+const argv = require('./argv.js');
 const configFileName = path.resolve(argv.config || 'y-server.config.js');
 
-const resolve = file => path.join(__dirname, file);
+const abs = file => path.join(__dirname, file);
 
 let config;
 
@@ -18,6 +18,8 @@ if (fs.existsSync(configFileName)) {
     __filename: __filename,
 
     port: process.env.PORT || 8888,
+
+    watch: [abs('')],
 
     middlewares: [
       require('morgan')('dev'),
@@ -34,7 +36,7 @@ if (fs.existsSync(configFileName)) {
         options: {
           apiPaths: ['/api/*'],
 
-          viewDir: resolve('./views'),
+          viewDir: abs('./views'),
           routes: {
             '/': { view: 'index.html', cgi: '/page/index' },
           },
@@ -47,21 +49,21 @@ if (fs.existsSync(configFileName)) {
           },
 
           mockEnable: true, // 是否使用本地模拟数据
-          mockDir: resolve('./json'), // 模拟数据根目录
-          mockResultResolver: resolve('./json/resultResolver.js'),
+          mockDir: abs('./json'), // 模拟数据根目录
+          mockResultResolver: abs('./json/resultResolver.js'),
           throwMockError: true,
         },
       },
       {
         name: '404',
         options: {
-          view: resolve('./views/404.html'),
+          view: abs('./views/404.html'),
         },
       },
       {
         name: '500',
         options: {
-          view: resolve('./views/500.html'),
+          view: abs('./views/500.html'),
         },
       }
     ],

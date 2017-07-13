@@ -1,14 +1,22 @@
+'use strict';
+
 const path = require('path');
 
 const nodemon = require('nodemon');
 
-const resolve = file => path.join(__dirname, file);
+const abs = file => path.join(__dirname, file);
 
-const argv = require('./process.argv.js');
+const argv = require('./argv.js');
 const config = require('./config.js');
 const middlewares = config.middlewares;
 
-const watchFiles = [resolve(''), config.__filename];
+let watchFiles = [config.__filename];
+
+if (Array.isArray(config.watch)) {
+  watchFiles = watchFiles.concat(config.watch);
+} else if (typeof config.watch === 'string') {
+  watchFiles.push(config.watch);
+}
 
 if (Array.isArray(middlewares)) {
   middlewares.forEach((middleware) => {
@@ -24,9 +32,9 @@ if (Array.isArray(middlewares)) {
 }
 
 const server = nodemon({
-  script: resolve('./index.js'),
+  script: abs('./index.js'),
   watch: watchFiles,
-  ext: 'js json html',
+  ext: 'js html',
   env: {
     argv: argv.__string,
   },
